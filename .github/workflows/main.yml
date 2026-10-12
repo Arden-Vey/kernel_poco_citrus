@@ -53,23 +53,13 @@ jobs:
         run: |
           export ARCH=arm64
           export SUBARCH=arm64
-          export CLANG_TRIPLE=aarch64-linux-gnu-
           export CROSS_COMPILE=aarch64-linux-gnu-
           export CROSS_COMPILE_ARM32=arm-linux-gnueabi-
-          export CC=clang
-          export LD=ld.lld
-          export AR=llvm-ar
-          export NM=llvm-nm
-          export OBJCOPY=llvm-objcopy
-          export OBJDUMP=llvm-objdump
-          export STRIP=llvm-strip
-          export LLVM=1
-          export LLVM_IAS=1
           export KBUILD_BUILD_USER=Reiame
           export KBUILD_BUILD_HOST=Mika
 
           mkdir -p out
-          make O=out "${CONFIG}_defconfig"
+          make O=out vendor/citrus-perf_defconfig
           make -j"$(nproc --all)" O=out
 
       - name: Upload artifact
