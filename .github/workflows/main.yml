@@ -33,6 +33,11 @@ jobs:
             gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi \
             gcc-arm-linux-gnueabihf python3 aria2 cpio
 
+      - name: Fix python2 symlink
+        run: |
+          sudo ln -sf /usr/bin/python3 /usr/bin/python2
+          python2 --version || true
+
       - name: Clone AOSP Clang 20
         run: |
           mkdir -p prebuilts/clang/host/linux-x86/clang-r547379
@@ -40,7 +45,7 @@ jobs:
           aria2c -x 16 -s 16 -k 1M \
             "https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz" \
             -o clang.tar.gz
-          tar -xf clang.tar.gz
+          tar -xzf clang.tar.gz || tar -xf clang.tar.gz
           rm -f clang.tar.gz
           cd -
 
@@ -59,7 +64,7 @@ jobs:
           export KBUILD_BUILD_HOST=Mika
 
           mkdir -p out
-          make O=out vendor/citrus-perf_defconfig
+          make O=out "${CONFIG}_defconfig"
           make -j"$(nproc --all)" O=out
 
       - name: Upload artifact
